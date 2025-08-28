@@ -4,7 +4,7 @@ import fetch from 'node-fetch';
 
 const app = express();
 const PORT = 3001;
-const PEER_URL = "http://192.168.6.224:5051"; // your Python aiortc local URL
+//const PEER_URL = "http://192.168.6.224:5051"; // your Python aiortc local URL
 
 // Middleware
 app.use(cors());
@@ -61,19 +61,7 @@ app.post('/offer/:id', async (req, res) => {
   } catch (e) {
     console.warn(`Backend answer timeout for ${streamId}, falling back: ${e.message}`);
     // fallback: forward directly to aiortc
-    try {
-      const response = await fetch(`${PEER_URL}/offer/${streamId}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sdp, type }),
-      });
-      if (!response.ok) throw new Error(`aiortc responded ${response.status}`);
-      const answer = await response.json();
-      return res.json(answer);
-    } catch (err) {
-      console.error(`Error forwarding offer:`, err.message);
-      return res.status(500).json({ error: "Failed to process offer", details: err.message });
-    }
+  
   }
 });
 
@@ -86,18 +74,7 @@ app.post('/ice-candidate/:id', async (req, res) => {
   // enqueue for backend puller
   qGet(clientIceQ, streamId).push(candidate);
 
-  // still try direct forward as fallback
-  try {
-    const r = await fetch(`${PEER_URL}/ice-candidate/${streamId}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(candidate),
-    });
-    if (!r.ok) console.warn(`PEER_URL ICE forward non-OK: ${r.status}`);
-  } catch (e) {
-    console.warn(`PEER_URL ICE forward error (non-fatal): ${e.message}`);
-  }
-
+  
   res.json({ status: "queued" });
 });
 
