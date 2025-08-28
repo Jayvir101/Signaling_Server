@@ -79,43 +79,43 @@ app.post('/ice-candidate/:id', async (req, res) => {
 });
 
 /** ---------------- PUBLISHER (cam3 only) ---------------- **/
-app.post("/publish/offer/:id", async (req, res) => {
-  const id = req.params.id;
-  if (id !== "cam3") return res.status(400).json({ error: "only cam3 can publish" });
-  try {
-    pubOffers.set(id, req.body); // store for backend puller
-    const r = await fetch(`${PEER_URL}/client-offer/${id}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(req.body),
-    });
-    const data = await r.json();
-    if (!r.ok) throw new Error(JSON.stringify(data));
-    res.json(data);
-  } catch (e) {
-    console.error(`publish/offer/${id} error`, e.message);
-    res.status(500).json({ error: "failed", details: e.message });
-  }
-});
+// app.post("/publish/offer/:id", async (req, res) => {
+//   const id = req.params.id;
+//   if (id !== "cam3") return res.status(400).json({ error: "only cam3 can publish" });
+//   try {
+//     pubOffers.set(id, req.body); // store for backend puller
+//     const r = await fetch(`${PEER_URL}/client-offer/${id}`, {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify(req.body),
+//     });
+//     const data = await r.json();
+//     if (!r.ok) throw new Error(JSON.stringify(data));
+//     res.json(data);
+//   } catch (e) {
+//     console.error(`publish/offer/${id} error`, e.message);
+//     res.status(500).json({ error: "failed", details: e.message });
+//   }
+// });
 
-app.post("/publish/ice-candidate/:id", async (req, res) => {
-  const id = req.params.id;
-  if (id !== "cam3") return res.status(400).json({ error: "only cam3 can publish" });
-  try {
-    qGet(pubClientIceQ, id).push(req.body); // store for backend puller
-    const r = await fetch(`${PEER_URL}/client-ice/${id}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(req.body),
-    });
-    const data = await r.json();
-    if (!r.ok) throw new Error(JSON.stringify(data));
-    res.json(data);
-  } catch (e) {
-    console.error(`publish/ice-candidate/${id} error`, e.message);
-    res.status(500).json({ error: "failed", details: e.message });
-  }
-});
+// app.post("/publish/ice-candidate/:id", async (req, res) => {
+//   const id = req.params.id;
+//   if (id !== "cam3") return res.status(400).json({ error: "only cam3 can publish" });
+//   try {
+//     qGet(pubClientIceQ, id).push(req.body); // store for backend puller
+//     const r = await fetch(`${PEER_URL}/client-ice/${id}`, {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify(req.body),
+//     });
+//     const data = await r.json();
+//     if (!r.ok) throw new Error(JSON.stringify(data));
+//     res.json(data);
+//   } catch (e) {
+//     console.error(`publish/ice-candidate/${id} error`, e.message);
+//     res.status(500).json({ error: "failed", details: e.message });
+//   }
+// });
 
 /** ---------------- BACKEND-ONLY (for aiortc client) ---------------- **/
 
@@ -173,5 +173,5 @@ app.get("/backend/publish/wait-ice/:id", (req, res) => {
 /** ---------------- START ---------------- **/
 app.listen(PORT, () => {
   console.log(`WebRTC signaling server running on port ${PORT}`);
-  console.log(`PEER_URL fallback: ${PEER_URL}`);
+//   console.log(`PEER_URL fallback: ${PEER_URL}`);
 });
